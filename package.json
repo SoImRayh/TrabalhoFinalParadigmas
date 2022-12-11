@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "proxy": "http://localhost:5173",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -16,7 +17,10 @@
     "@panva/oauth4webapi": "^1.2.1",
     "@radix-ui/react-popover": "1.0.2",
     "@radix-ui/react-select": "^1.1.2",
+    "@types/jsonpath": "^0.2.0",
     "axios": "^1.2.0",
+    "http-proxy-middleware": "^2.0.6",
+    "jsonpath": "^1.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "styled-components": "^5.3.6"

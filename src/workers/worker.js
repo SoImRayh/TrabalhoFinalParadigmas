@@ -1,13 +1,9 @@
-
+const url = 'https://us.api.blizzard.com/data/wow/item/'
+const urloptions = '?namespace=static-us&locale=pt_BR'
  self.onmessage = (e) =>{
-
-         e =  fetch('https://meowfacts.herokuapp.com').then((response) => {
-            response.json().then( json => {
-                console.log(json.data)
-                self.postMessage(json.data)
-            })
-        }).catch((e)=> {
-            console.error(e.data)
+    fetch(`${url}${e.data.item.item.id}${urloptions}${e.data.token}`).then( response => {
+        response.json().then( data => {
+            self.postMessage({data, htmlid: e.data.index})
         })
-
+    })
 }

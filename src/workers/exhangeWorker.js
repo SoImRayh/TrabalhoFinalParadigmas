@@ -6,6 +6,8 @@ self.onmessage = (e) => {
     * */
     let qtd = 0
 
+    const vetor =  new SharedArrayBuffer(25*4)
+
     for (let i = 0; i < 40000; i++) {
         switch (Math.ceil(Math.random()*3)){
 

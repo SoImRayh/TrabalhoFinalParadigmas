@@ -5,8 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
 
   plugins: [
-  //     {
-
+      //{
   //     name: 'configure-response-headers',
   //     configureServer: server => {
   //       server.middlewares.use((_req, res, next) => {
@@ -15,7 +14,6 @@ export default defineConfig({
   //         next();
   //       });
   //     }
-
-  // },
+  //},
       react()]
 })

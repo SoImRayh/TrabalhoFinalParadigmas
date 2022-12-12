@@ -5,13 +5,8 @@ self.onmessage = (e) => {
     * usando a flag para tratar: 0 para nao disponivel e 1 para disponivel
     * */
     let qtd = 0
-    let item = 0
-
-    while(true) {
-
         // fazendo a consulta do vetor para procurar por um item
         item = Math.ceil(Math.random()*(9));
-
         switch (Math.ceil(Math.random()*2)){
             case 1 :
                 //console.log('vou vender!');

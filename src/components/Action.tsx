@@ -116,7 +116,7 @@ export function Action(){
     }
 
     /*
-    * @handleItemsQuantityButton
+    * handleItemsQuantityButton
     * usando para gerenciar o click no botão, o intuito é usar para iniciar a exchange no trabalho
     * isto é, pegar os items e começar a trabalhar com eles com workers
     * */

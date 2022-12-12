@@ -14,7 +14,7 @@ export const getPaths = (data: Array<object>): void => {
 
     let workers = []
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 6; i++) {
         workers.push(new Worker('src/workers/exhangeWorker.js'))
         workers[i].postMessage({flag, array})
     }

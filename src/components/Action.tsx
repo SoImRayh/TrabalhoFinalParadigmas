@@ -17,6 +17,7 @@ import {WowItem} from "./WoWItem/WowItem";
 import {ItemAPIResponse} from "../domain/interface/ItemAPIResponse";
 import {ItemPrice} from "./Preco/ItemPrice";
 import {getPaths} from "../workers/jsonPath";
+import { Carrinho } from "./carrinho/Carrinho";
 
 
 const options: string = 'namespace=dynamic-us&locale=pt_BR';
@@ -29,7 +30,8 @@ interface Item {
     bonus_list: number[]
     modifiers: [{type: number, value: number}]
 }
-interface ActionItem {
+
+export interface ActionItem {
     unit_price: number,
     id: number,
     item: Item
@@ -56,7 +58,9 @@ const worker = new Worker('src/workers/worker.js')
 export function Action(){
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerpage] = useState(10)
+    const [carrinho, setcarrinho] =  useState<ActionItem[]>([])
     const [items, setItems] = useState<ActionItem[]>([])
+    const [componentes, setComponentes] = useState<string[]>([])
 
     useEffect(() => {
         fetch(`${actionurl}${options}${token}`).then( ( response ) => {
@@ -73,6 +77,9 @@ export function Action(){
 
 
     const handleChangePage = ( event : React.MouseEvent<HTMLButtonElement>  | null , newPage: number) => {
+        componentes.forEach(element => {
+            ReactDOM.unmountComponentAtNode(getElementById(element))
+        });
         setPage(newPage)
     }
 
@@ -90,14 +97,22 @@ export function Action(){
     * @return:
     *   renderiza o componente WoWItem no item com o 'id' passado*/
     const handleItemApi = ( data: { data : ItemAPIResponse,htmlid: string; } ) => {
-        render(
-            <WowItem
-                item={data.data}
-            />,document.getElementById('item'+data.htmlid))
+
+        const currentItems = items.map(i => {
+            if(i.item.id == data.data.id){
+                i.item.data = data.data
+            }
+            
+            return i
+        })
+
+        setItems(currentItems)
     }
 
     worker.onmessage = (e) => {
         handleItemApi(e.data)
+
+        console.log(e)
     }
 
     /*
@@ -109,8 +124,31 @@ export function Action(){
         getPaths(items)
     }
 
+    const handleCarrinho =(elid : number ) => {
+        if(carrinho.find(element => element.id === elid)){
+            alert('quantidade maxima obtida')
+            return
+        }
+        
+        const item = items.find( element => element.id === elid)
+        setcarrinho( oldcarrinho => [...oldcarrinho, item]) 
+    }
+
+    const carrinhos = carrinho.map(element => {
+        return(
+            <div className="flex gap-8">
+                <h2 className="bg-cyan-600">Action:{element.id}</h2>
+                <h2>Quantidade: {element.quantity}</h2>
+            </div>
+        )
+    })
+
   return (
       <div className="flex-1 items-center">
+            <div>
+                historico de compras <br/>
+                {carrinhos}
+            </div>
           <div className="flex items-center">
               <img src={"public/logo.png"} alt="testando"/>
               <h2 className="text-4xl border-2 h-92 w-96">Action House oficial dos Crias ltda</h2>
@@ -132,18 +170,25 @@ export function Action(){
                       (rowsPerPage > 0 ? items.slice(page * rowsPerPage , page * rowsPerPage + rowsPerPage): items).map((item, index) => {
                       return(
                           <TableRow key={index}>
-                              <TableCell id={'item'+index.toString()}>{item.item.id}</TableCell>
+                              {/* <TableCell id={'item'+index.toString()}>{item.item.id}</TableCell> */}
+                              <TableCell id={'item'+index.toString()}>
+                                {item.item.data ? 
+                                <WowItem                item={item.item.data}            /> : 
+                                item.item.id}
+                                </TableCell>
                               <TableCell>{item.quantity}</TableCell>
                               <TableCell><ItemPrice price={item.unit_price}/></TableCell>
                               <TableCell>{item.time_left}</TableCell>
                               <TableCell>
-                                  <button className="text-white font-black"
+                                  <button className="text-white font-black bg-cyan-600"
                                       onClick={() => {
                                           worker.postMessage({item, index, token})
                                       }
                                         }>
                                       buscar Item
                                   </button>
+                                  <button className="text-white font-black bg-cyan-600" onClick={() =>{
+                                    handleCarrinho(item.id)} }>comprar tudo</button>
                               </TableCell>
                           </TableRow>
                       )

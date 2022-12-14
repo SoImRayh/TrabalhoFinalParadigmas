@@ -1,6 +1,6 @@
-import React, {Component, useEffect, useState} from "react";
+import React, { useEffect, useState} from "react";
 import {
-    Button,
+
     Paper,
     Table,
     TableBody,
@@ -10,14 +10,12 @@ import {
     TablePagination,
     TableRow
 } from "@mui/material";
-import ReactDOM, {createRoot} from "react-dom/client";
-import {WowToken} from "./WowToken/WowToken";
-import {render} from "react-dom";
-import {WowItem} from "./WoWItem/WowItem";
-import {ItemAPIResponse} from "../domain/interface/ItemAPIResponse";
+
 import {ItemPrice} from "./Preco/ItemPrice";
 import {getPaths} from "../workers/jsonPath";
-import { Carrinho } from "./carrinho/Carrinho";
+import {WowItem} from "./WoWItem/WowItem";
+import {Carrinho} from "./carrinho/Carrinho";
+
 
 
 const options: string = 'namespace=dynamic-us&locale=pt_BR';
@@ -63,7 +61,7 @@ export function Action(){
     const [componentes, setComponentes] = useState<ActionItem[]>([])
 
     useEffect(() => {
-        setComponentes((rowsPerPage > 0 ? items.slice(page * rowsPerPage , page * rowsPerPage + rowsPerPage): items))
+
         fetch(`${actionurl}${options}${token}`).then( ( response ) => {
             response.json().then( ( data : APIResponse ) => {
                 setItems(data.auctions)
@@ -75,10 +73,14 @@ export function Action(){
         })
     },[])
 
+    useEffect( () => {
+        setComponentes((rowsPerPage > 0 ? items.slice(page * rowsPerPage , page * rowsPerPage + rowsPerPage): items))
+    },[items, page])
+
 
 
     const handleChangePage = ( event : React.MouseEvent<HTMLButtonElement>  | null , newPage: number) => {
-
+        setComponentes([])
         setPage(newPage)
     }
 
@@ -86,18 +88,6 @@ export function Action(){
         setRowsPerpage(parseInt(event.target.value, 10))
         setPage(0)
     }
-
-    /*
-    *
-    * faz o fetch na api da blizzard para buscar as imagens, o proposito e atender o requisito 1 do trabalho que é fazer
-    * buscas assíncronas sob demanda
-    * @param data dados brutos do item
-    *
-    * @return:
-    *   renderiza o componente WoWItem no item com o 'id' passado*/
-
-
-    const getImage = (id)
 
     /*
     * handleItemsQuantityButton
@@ -121,20 +111,12 @@ export function Action(){
         })
     }
 
-    const carrinhos = carrinho.map(element => {
-        return(
-            <div className="flex gap-8">
-                <h2 className="bg-cyan-600">Action:{element.id}</h2>
-                <h2>Quantidade: {element.quantity}</h2>
-            </div>
-        )
-    })
 
-  return (
+
+    return (
       <div className="flex-1 items-center">
-            <div>
-                historico de compras <br/>
-                {carrinhos}
+            <div className="static">
+                <Carrinho items={carrinho}/>
             </div>
           <div className="flex items-center">
               <img src={"public/logo.png"} alt="testando"/>
@@ -154,20 +136,11 @@ export function Action(){
               </TableHead>
               <TableBody>
                   {
-                      (rowsPerPage > 0 ? items.slice(page * rowsPerPage , page * rowsPerPage + rowsPerPage): items).map((actionItem, index) => {
-                      return(
+                      componentes.map((actionItem, index) => {
+                          return(
                           <TableRow key={index}>
                               <TableCell>
-                                  {() => {
-                                      return(
-                                          <div className="flex ">
-                                              <img src="" alt="nao deu" className="h-8 w-8"/>
-                                              <h2 className="text-center">naftalina</h2>
-                                          </div>
-                                      )
-                                  }
-
-                                  }
+                                  <WowItem itemId={actionItem.item.id}/>
                                 </TableCell>
                               <TableCell>{actionItem.quantity}</TableCell>
                               <TableCell><ItemPrice price={actionItem.unit_price}/></TableCell>

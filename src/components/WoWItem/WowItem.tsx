@@ -25,13 +25,22 @@ interface ItemAPI{
 
 export function WowItem(props: WowItemProps) {
 
+  /*
+  * state para controlar as imagens
+  * */
   const [img, setimg] = useState('')
 
+
+  /*
+  * state para controlar o item vindo da API a partir do 'id' passado
+  * */
   const [item, setitem] = useState<ItemAPI>()
 
 
+  /*
+  * indo na API buscar o nome do item, a partir do 'id' do item na entrada das 'props'
+  * */
   useEffect(() => {
-    console.log(props.itemId)
     fetch(`${itemUrl}${props.itemId}${options}${token}`).then( response => {
       response.json().then(data => {
         setitem(data)
